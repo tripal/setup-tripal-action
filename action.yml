@@ -21,7 +21,7 @@ inputs:
   tripal_version:
     description: The version of Tripal to download.
     required: true
-    default: 3.4
+    default: 7.x-3.4
 outputs:
   drush_path:
     description: "The Path to the Drush Executable."
