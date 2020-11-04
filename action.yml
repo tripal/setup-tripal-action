@@ -1,19 +1,52 @@
 name: 'Setup Tripal'
 description: 'Setup a basic Tripal site.'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
+  postgres_user:
+    description: The user for your postgresql service.
     required: true
-    default: 'World'
+    default: postgres
+  postgres_pass:
+    description: The password for your postgresql user.
+    required: true
+    default: postgrespassword
+  postgres_db:
+    description: The name of the database to install Tripal in.
+    required: true
+    default: testdb
+  php_version:
+    description: The PHP version to setup.
+    required: true
+    default: 7.2
 outputs:
-  random-number:
-    description: "Random number"
-    value: ${{ steps.random-number-generator.outputs.random-id }}
+  drush_path:
+    description: "The Path to the Drush Executable."
+    value: ${{ steps.drush.outputs.path }}
+  drush_version:
+    description: "The version of drush which was installed."
+    value: ${{ steps.drush.outputs.version }}
 runs:
   using: "composite"
   steps:
-    - run: echo Hello ${{ inputs.who-to-greet }}.
-      shell: bash
-    - id: random-number-generator
-      run: echo "::set-output name=random-id::$(echo $RANDOM)"
-      shell: bash
+    # Setup PHP according to the version passed in.
+    - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php-version }}
+          # Install extensions for PHP-PostgreSQL
+          extensions: mbstring, intl, php-pgsql, php-gd, php-xml
+          # Increase memory limit to 2G
+          ini-values: memory_limit=2G
+          # Enable xdebug for coverage reporting
+          coverage: xdebug
+          # Install composer and phpunit globally.
+          tools: composer, phpunit
+    # Install Drush 8.x globally
+    # NOTE: `drush` is not available without the full path.
+    #       I tried adding it to the path but that broke other things.
+    - name: Install Drush
+      id: drush
+      run: |
+        composer global require "drush/drush:~8"
+        /home/runner/.composer/vendor/bin/drush --version
+        echo "::set-output name=path::/home/runner/.composer/vendor/bin/drush"
+        echo "::set-output name=version::$(/home/runner/.composer/vendor/bin/drush --version)"

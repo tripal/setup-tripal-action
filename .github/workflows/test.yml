@@ -12,8 +12,13 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - id: foo
-      uses: actions/setup-tripal-action
+      uses: tripal/setup-tripal-action@7.x-3.x-0.1
       with:
-        who-to-greet: 'Mona the Octocat'
-    - run: echo random-number ${{ steps.foo.outputs.random-number }}
+        php-version: 7.2
+    - name: test_drush
+      env:
+        DRUSH: ${{ steps.foo.outputs.drush_path }}
+      run: |
+        echo "Output Drush Version: ${{ steps.foo.outputs.drush_version }}"
+        $DRUSH --help
       shell: bash
