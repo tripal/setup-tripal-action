@@ -41,6 +41,7 @@ runs:
       run: |
         composer global require "drush/drush:~8" --quiet
         /home/runner/.composer/vendor/bin/drush --version
+        git config --global advice.detachedHead false
         echo "::set-output name=path::/home/runner/.composer/vendor/bin/drush"
     # Install Drupal and Drupal module dependencies for Tripal.
     # It also patches Drupal.
@@ -96,8 +97,8 @@ runs:
         cd $DRUPAL_ROOT
         $DRUSH en -y  --quiet tripal tripal_chado tripal_chado_views tripal_ws tripal_ds
         echo "==> Install Chado"
-        $DRUSH eval "module_load_include('inc', 'tripal_chado', 'includes/tripal_chado.install'); tripal_chado_load_drush_submit('Install Chado v1.3');"  --quiet
+        $DRUSH eval "module_load_include('inc', 'tripal_chado', 'includes/tripal_chado.install'); tripal_chado_load_drush_submit('Install Chado v1.3');"
         $DRUSH trp-run-jobs --quiet --username=$ACCOUNT_NAME
         echo "==> Prepare Chado"
-        $DRUSH eval "module_load_include('inc', 'tripal_chado', 'includes/setup/tripal_chado.setup'); tripal_chado_prepare_drush_submit();"  --quiet
+        $DRUSH eval "module_load_include('inc', 'tripal_chado', 'includes/setup/tripal_chado.setup'); tripal_chado_prepare_drush_submit();"
         $DRUSH trp-run-jobs --quiet --username=$ACCOUNT_NAME
