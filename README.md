@@ -96,7 +96,9 @@ jobs:
         DRUSH: ${{ steps.tripalsetup.outputs.drush_path }}
         DRUPAL_ROOT: ${{ steps.tripalsetup.outputs.drupal_root }}
       run: |
+        mkdir -p $DRUPAL_ROOT/sites/all/modules/example_module
         cp -R * $DRUPAL_ROOT/sites/all/modules/example_module
+        cd $DRUPAL_ROOT
         $DRUSH en -y example_module
  
     # Runs the PHPUnit tests.
@@ -108,8 +110,7 @@ jobs:
         DRUPAL_ROOT: ${{ steps.tripalsetup.outputs.drupal_root }}
       run: |
         cd $DRUPAL_ROOT/sites/all/modules/example_module
-        composer require --dev mheap/phpunit-github-actions-printer
-        composer update
-        cp tests/.travis.env tests/.env
+        composer require --dev mheap/phpunit-github-actions-printer --quiet
+        composer update --quiet
         ./vendor/bin/phpunit --printer mheap\\GithubActionsReporter\\Printer
 ```
