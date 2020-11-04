@@ -28,6 +28,7 @@ runs:
     #       I tried adding it to the path but that broke other things.
     - name: Install Drush
       id: drush
+      shell: bash
       run: |
         composer global require "drush/drush:~8"
         /home/runner/.composer/vendor/bin/drush --version
