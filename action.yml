@@ -4,22 +4,27 @@ inputs:
   postgres_user:
     description: The user for your postgresql service.
     required: true
-    default: postgres
   postgres_pass:
     description: The password for your postgresql user.
     required: true
-    default: postgrespassword
   postgres_db:
     description: The name of the database to install Tripal in.
     required: true
-    default: testdb
+  account_name:
+    description: The name of the administrative user for your Drupal/Tripal site.
+    required: true
+    default: tripaladmin
+  account_pass:
+    description: The password for your Drupal/Tripal administrative user.
+    required: true
+    default: somereallysecurepassword
 outputs:
   drush_path:
     description: "The Path to the Drush Executable."
     value: ${{ steps.drush.outputs.path }}
-  drush_version:
-    description: "The version of drush which was installed."
-    value: ${{ steps.drush.outputs.version }}
+  drupal_root:
+    description: "The Path to the Drupal installation."
+    value: ${{ steps.drupal.outputs.path }}
 runs:
   using: "composite"
   steps:
@@ -30,7 +35,65 @@ runs:
       id: drush
       shell: bash
       run: |
-        composer global require "drush/drush:~8"
+        composer global require "drush/drush:~8" --quiet
         /home/runner/.composer/vendor/bin/drush --version
         echo "::set-output name=path::/home/runner/.composer/vendor/bin/drush"
-        echo "::set-output name=version::$(/home/runner/.composer/vendor/bin/drush --version)"
+    # Install Drupal and Drupal module dependencies for Tripal.
+    # It also patches Drupal.
+    - name: Install Drupal
+      id: drupal
+      shell: bash
+      env:
+        DRUSH: ${{ steps.drush.outputs.path }}
+        DRUPAL_ROOT: "/home/runner/work/drupal"
+        POSTGRES_CONNECTION_STRING: pgsql://${{ inputs.postgres_user }}:${{ inputs.postgres_pass }}@localhost:5432/${{ inputs.postgres_db }}
+        ACCOUNT_NAME: ${{ inputs.account_name }}
+        ACCOUNT_PASS: ${{ inputs.account_pass }}
+      run: |
+        echo "::set-output name=path::$DRUPAL_ROOT"
+        echo "==> Downloading Drupal"
+        cd /home/runner/work
+        $DRUSH dl drupal-7 -y
+        mv drupal-7* drupal
+        echo "==> Installing Drupal"
+        cd $DRUPAL_ROOT
+        $DRUSH si -y --root=$DRUPAL_ROOT \
+              --db-url=$POSTGRES_CONNECTION_STRING \
+              --account-name=$ACCOUNT_NAME \
+              --account-pass=$ACCOUNT_PASS \
+              --site-mail=admin@example.com \
+              --site-name=Tripal3
+        echo "==> Downloading dependencies"
+        $DRUSH dl -y views ctools entity redirect date ds field_group field_group_table
+        echo "==> Enabling Dependencies"
+        $DRUSH en -y views ctools entity redirect date ds field_group field_group_table
+        echo "==> Apply Drupal Patch"
+        cd $DRUPAL_ROOT
+        wget --no-check-certificate https://drupal.org/files/drupal.pgsql-bytea.27.patch
+        patch -p1 < drupal.pgsql-bytea.27.patch
+    # Install Tripal, Chado and prepares the Drupal/Chado databases
+    # Also patches views.
+    - name: Install Tripal
+      id: tripal
+      shell: bash
+      env:
+        DRUSH: ${{ steps.drush.outputs.path }}
+        DRUPAL_ROOT: ${{ steps.drupal.outputs.path }}
+        ACCOUNT_NAME: ${{ inputs.account_name }}
+        ACCOUNT_PASS: ${{ inputs.account_pass }}
+      run: |
+        echo "==> Move Tripal into the Drupal modules directory"
+        ls /home/runner/work/tripal/tripal
+        cp -R /home/runner/work/tripal/tripal $DRUPAL_ROOT/sites/all/modules
+        echo "==> Apply Views Patch"
+        cd $DRUPAL_ROOT/sites/all/modules/views
+        patch -p1 < ../tripal/tripal_chado_views/views-sql-compliant-three-tier-naming-1971160-30.patch
+        echo "==> Install Tripal"
+        cd $DRUPAL_ROOT
+        $DRUSH en -y tripal tripal_chado tripal_chado_views tripal_ws tripal_ds
+        echo "==> Install Chado"
+        $DRUSH eval "module_load_include('inc', 'tripal_chado', 'includes/tripal_chado.install'); tripal_chado_load_drush_submit('Install Chado v1.3');"
+        $DRUSH trp-run-jobs --username=$ACCOUNT_NAME
+        echo "==> Prepare Chado"
+        $DRUSH eval "module_load_include('inc', 'tripal_chado', 'includes/setup/tripal_chado.setup'); tripal_chado_prepare_drush_submit();"
+        $DRUSH trp-run-jobs --username=$ACCOUNT_NAME
