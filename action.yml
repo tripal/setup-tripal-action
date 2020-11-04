@@ -13,10 +13,6 @@ inputs:
     description: The name of the database to install Tripal in.
     required: true
     default: testdb
-  php_version:
-    description: The PHP version to setup.
-    required: true
-    default: 7.2
 outputs:
   drush_path:
     description: "The Path to the Drush Executable."
@@ -27,19 +23,6 @@ outputs:
 runs:
   using: "composite"
   steps:
-    # Setup PHP according to the version passed in.
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ inputs.php-version }}
-          # Install extensions for PHP-PostgreSQL
-          extensions: mbstring, intl, php-pgsql, php-gd, php-xml
-          # Increase memory limit to 2G
-          ini-values: memory_limit=2G
-          # Enable xdebug for coverage reporting
-          coverage: xdebug
-          # Install composer and phpunit globally.
-          tools: composer, phpunit
     # Install Drush 8.x globally
     # NOTE: `drush` is not available without the full path.
     #       I tried adding it to the path but that broke other things.
