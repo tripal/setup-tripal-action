@@ -29,7 +29,7 @@ runs:
   steps:
     # Setup PHP according to the version passed in.
     - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ inputs.php-version }}
           # Install extensions for PHP-PostgreSQL
