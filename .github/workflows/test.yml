@@ -14,16 +14,16 @@ jobs:
     # Setup PHP according to the version passed in.
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
-        with:
-          php-version: 7.2
-          # Install extensions for PHP-PostgreSQL
-          extensions: mbstring, intl, php-pgsql, php-gd, php-xml
-          # Increase memory limit to 2G
-          ini-values: memory_limit=2G
-          # Enable xdebug for coverage reporting
-          coverage: xdebug
-          # Install composer and phpunit globally.
-          tools: composer, phpunit
+      with:
+        php-version: 7.2
+        # Install extensions for PHP-PostgreSQL
+        extensions: mbstring, intl, php-pgsql, php-gd, php-xml
+        # Increase memory limit to 2G
+        ini-values: memory_limit=2G
+        # Enable xdebug for coverage reporting
+        coverage: xdebug
+        # Install composer and phpunit globally.
+        tools: composer, phpunit
     - id: foo
       uses: tripal/setup-tripal-action@7.x-3.x-0.1
     - name: test_drush
