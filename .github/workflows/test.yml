@@ -55,12 +55,11 @@ jobs:
         tools: composer, phpunit
     # Check Drush
     - id: tripalsetup
-      uses: tripal/setup-tripal-action@7.x-3.x-0.1
+      uses: tripal/setup-tripal-action@7.x-3.x-1.0
       with:
         postgres_user: tripaladmin
         postgres_pass: somesupersecurepassword
         postgres_db: testdb
-        tripal_version: 7.x-3.x
     - name: test_install
       env:
         DRUSH: ${{ steps.tripalsetup.outputs.drush_path }}

@@ -18,7 +18,7 @@ inputs:
     description: The password for your Drupal/Tripal administrative user.
     required: true
     default: somereallysecurepassword
-  tripal_verion:
+  tripal_version:
     description: The version of Tripal to download.
     required: true
     default: 3.4
@@ -88,7 +88,7 @@ runs:
       run: |
         echo "==> Download Tripal"
         cd $DRUPAL_ROOT/sites/all/modules
-        git clone https://github.com/tripal/tripal.git --depth 1 --branch=${{ inputs.tripal_version }}
+        git clone https://github.com/tripal/tripal.git --depth 1 --branch ${{ inputs.tripal_version }}
         echo "==> Apply Views Patch"
         cd $DRUPAL_ROOT/sites/all/modules/views
         patch -p1 < ../tripal/tripal_chado_views/views-sql-compliant-three-tier-naming-1971160-30.patch
