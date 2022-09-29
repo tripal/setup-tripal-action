@@ -78,7 +78,6 @@ runs:
         patch -p1 < drupal.pgsql-bytea.27.patch
         wget --no-check-certificate https://www.drupal.org/files/issues/2022-06-20/3284424-7.patch
         patch -p1 < 3284424-7.patch
-        cat 3284424-7.patch
     # Install Tripal, Chado and prepares the Drupal/Chado databases
     # Also patches views.
     - name: Install Tripal
