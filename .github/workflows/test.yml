@@ -39,8 +39,12 @@ jobs:
     steps:
     # Checkout the repository and setup workspace.
     - uses: actions/checkout@v2
+    
     - name: Inject slug/short variables
       uses: rlespinasse/github-slug-action@v4
+      with:
+        prefix: SLUG_
+    
     # Setup PHP according to the version passed in.
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -56,7 +60,7 @@ jobs:
         tools: composer, phpunit
     # Check Drush
     - id: tripalsetup
-      uses: tripal/setup-tripal-action@${{ env.GITHUB_REF_SLUG }}
+      uses: tripal/setup-tripal-action@$SLUG_GITHUB_REF_SLUG
       with:
         postgres_user: tripaladmin
         postgres_pass: somesupersecurepassword
