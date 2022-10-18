@@ -58,10 +58,11 @@ jobs:
         coverage: xdebug
         # Install composer and phpunit globally.
         tools: composer, phpunit
-    - name: see
-      run: |
-        echo $SLUG_GITHUB_REF_SLUG
-        echo ${{ SLUG_GITHUB_REF_SLUG }}
+    - name: Show GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
     # Check Drush
     #- id: tripalsetup
     #  uses: tripal/setup-tripal-action
