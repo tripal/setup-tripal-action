@@ -59,9 +59,9 @@ jobs:
         # Install composer and phpunit globally.
         tools: composer, phpunit
     - name: Show GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
 
     # Check Drush
     #- id: tripalsetup
