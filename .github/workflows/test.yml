@@ -60,7 +60,7 @@ jobs:
         pwd
     # Check Drush
     - id: tripalsetup
-      uses: ./action.yml
+      uses: ./
       with:
         postgres_user: tripaladmin
         postgres_pass: somesupersecurepassword
