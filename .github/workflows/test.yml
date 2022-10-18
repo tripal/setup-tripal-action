@@ -58,9 +58,13 @@ jobs:
         coverage: xdebug
         # Install composer and phpunit globally.
         tools: composer, phpunit
+    - name: see
+      run: |
+        echo $SLUG_GITHUB_REF_SLUG
+        echo ${{ SLUG_GITHUB_REF_SLUG }}
     # Check Drush
     - id: tripalsetup
-      uses: "tripal/setup-tripal-action@$SLUG_GITHUB_REF_SLUG"
+      uses: "tripal/setup-tripal-action"
       with:
         postgres_user: tripaladmin
         postgres_pass: somesupersecurepassword
