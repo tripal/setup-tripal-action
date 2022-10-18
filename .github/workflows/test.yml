@@ -64,7 +64,7 @@ jobs:
         echo ${{ SLUG_GITHUB_REF_SLUG }}
     # Check Drush
     - id: tripalsetup
-      uses: "tripal/setup-tripal-action"
+      uses: tripal/setup-tripal-action
       with:
         postgres_user: tripaladmin
         postgres_pass: somesupersecurepassword
