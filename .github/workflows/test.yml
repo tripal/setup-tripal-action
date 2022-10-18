@@ -56,7 +56,7 @@ jobs:
 
     # Check Drush
     - id: tripalsetup
-      uses: tripal/setup-tripal-action@${{ github.sha }}
+      uses: ./action.yml
       with:
         postgres_user: tripaladmin
         postgres_pass: somesupersecurepassword
