@@ -63,22 +63,22 @@ jobs:
         echo $SLUG_GITHUB_REF_SLUG
         echo ${{ SLUG_GITHUB_REF_SLUG }}
     # Check Drush
-    - id: tripalsetup
-      uses: tripal/setup-tripal-action
-      with:
-        postgres_user: tripaladmin
-        postgres_pass: somesupersecurepassword
-        postgres_db: testdb
-        tripal_version: 7.x-3.x
-    - name: test_install
-      env:
-        DRUSH: ${{ steps.tripalsetup.outputs.drush_path }}
-        DRUPAL_ROOT: ${{ steps.tripalsetup.outputs.drupal_root }}
-      run: |
-        $DRUSH --version
-        cd $DRUPAL_ROOT
-        $DRUSH status
-        echo "==> File contents of Drupal Root"
-        ls
-        echo "==> File content of Modules Directory"
-        ls $DRUPAL_ROOT/sites/all/modules
+    #- id: tripalsetup
+    #  uses: tripal/setup-tripal-action
+    #  with:
+    #    postgres_user: tripaladmin
+    #    postgres_pass: somesupersecurepassword
+    #    postgres_db: testdb
+    #    tripal_version: 7.x-3.x
+    #- name: test_install
+    #  env:
+    #    DRUSH: ${{ steps.tripalsetup.outputs.drush_path }}
+    #    DRUPAL_ROOT: ${{ steps.tripalsetup.outputs.drupal_root }}
+    #  run: |
+    #    $DRUSH --version
+    #    cd $DRUPAL_ROOT
+    #    $DRUSH status
+    #    echo "==> File contents of Drupal Root"
+    #    ls
+    #    echo "==> File content of Modules Directory"
+    #    ls $DRUPAL_ROOT/sites/all/modules
