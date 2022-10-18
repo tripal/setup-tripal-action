@@ -57,6 +57,7 @@ jobs:
     - name: Testing
       run: |
         ls
+        pwd
     # Check Drush
     - id: tripalsetup
       uses: ./action.yml
