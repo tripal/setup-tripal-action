@@ -74,8 +74,10 @@ runs:
         $DRUSH en -y --quiet views ctools entity redirect date ds field_group field_group_table
         echo "==> Apply Drupal Patch"
         cd $DRUPAL_ROOT
-        wget --quiet --no-check-certificate https://www.drupal.org/files/drupal.pgsql-bytea.27.patch
-        patch --quiet -p1 < drupal.pgsql-bytea.27.patch
+        wget --no-check-certificate https://www.drupal.org/files/drupal.pgsql-bytea.27.patch
+        patch -p1 < drupal.pgsql-bytea.27.patch
+        wget --no-check-certificate https://www.drupal.org/files/issues/2022-06-20/3284424-7.patch
+        patch -p1 < 3284424-7.patch
     # Install Tripal, Chado and prepares the Drupal/Chado databases
     # Also patches views.
     - name: Install Tripal
