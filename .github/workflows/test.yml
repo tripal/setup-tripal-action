@@ -54,6 +54,9 @@ jobs:
         # Install composer and phpunit globally.
         tools: composer, phpunit
 
+    - name: Testing
+      run: |
+        ls
     # Check Drush
     - id: tripalsetup
       uses: ./action.yml
